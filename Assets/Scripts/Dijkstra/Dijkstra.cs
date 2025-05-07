@@ -3,19 +3,11 @@ using UnityEngine;
 
 public class Dijkstra : MonoBehaviour
 {
-    public Node startNode;
-    public Node endNode;
-
     protected Node[] nodesInScene;
 
-    protected void GetAllNodes()
+    public void GetAllNodes()
     {
         nodesInScene = FindObjectsByType<Node>(FindObjectsSortMode.None);
-    }
-
-    private void Awake()
-    {
-        GetAllNodes();
     }
 
     public void DebugPath (List<Node> path)
@@ -62,6 +54,8 @@ public class Dijkstra : MonoBehaviour
             Node current = unexplored[0];
             unexplored.RemoveAt(0);
 
+            //Debug.Log(current.name);
+
             foreach (var neighbourNode in current.Neighbours)
             {
                 if (!unexplored.Contains(neighbourNode))
@@ -89,12 +83,13 @@ public class Dijkstra : MonoBehaviour
         return false;
     }
 
-    void SetUnexplored(ref List<Node> unexplored)
+    protected void SetUnexplored(ref List<Node> unexplored)
     {
         foreach (var node in nodesInScene)
         {
             node.ResetNode();
             unexplored.Add(node);
         }
+        Debug.Log(unexplored.Count);
     }
 }

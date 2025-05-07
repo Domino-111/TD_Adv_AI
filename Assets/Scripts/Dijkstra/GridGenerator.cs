@@ -5,9 +5,10 @@ public class GridGenerator : MonoBehaviour
 {
     public Node prefab;
 
-    public int rows = 10, columns = 10;
+    public int rows = 25, columns = 25;
     public float gap = 1f;
 
+    [ContextMenu("Generate Grid")]
     public void GenerateGrid()
     {
         Vector3 startPos = transform.position;
@@ -40,6 +41,20 @@ public class GridGenerator : MonoBehaviour
             }
 
             prev = null;
+        }
+    }
+
+    [ContextMenu("Street Sweeper")]
+    public void KillAllOrphans()
+    {
+        Node[] nodesInScene = FindObjectsByType<Node>(FindObjectsSortMode.None);
+
+        foreach (var orphan in nodesInScene)
+        {
+            if (orphan.Neighbours.Count == 0)
+            {
+                DestroyImmediate(orphan.gameObject);
+            }
         }
     }
 }

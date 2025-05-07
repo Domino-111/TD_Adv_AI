@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class Node : MonoBehaviour
 {
     public List<Node> Neighbours;
@@ -13,7 +14,25 @@ public class Node : MonoBehaviour
         set => pathWeight = value;
     }
 
-    public Node PreviousNode { get; set; }  
+    public Node PreviousNode { get; set; }
+
+    private float heuristic;
+    public float Heuristic
+    {
+        get => heuristic;
+        set => heuristic = value;
+    }
+
+    public float pathHeuristicWeight
+    {
+        get => pathWeight + heuristic;
+    }
+
+    public float SetHeuristic(Vector3 goal)
+    {
+        heuristic = Vector3.Distance(transform.position, goal);
+        return heuristic;
+    }
 
     public void ResetNode()
     {
@@ -46,5 +65,45 @@ public class Node : MonoBehaviour
 
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(transform.position, radius);
+    }
+
+    private void OnValidate() => ValidateNeighbours();
+
+    private void ValidateNeighbours()
+    {
+        foreach (var node in Neighbours)
+        {
+            if (node == null)
+            {
+                continue;
+            }
+
+            if (!node.Neighbours.Contains(this))
+            {
+                node.Neighbours.Add(this);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var node in Neighbours)
+        {
+            if (node.Neighbours.Contains(this))
+            {
+                node.Neighbours.Remove(this);
+            }
+        }
+    }
+
+    [ContextMenu("Validate Grid")]
+    public void ValidateGrid()
+    {
+        Node[] nodesInScene = FindObjectsByType<Node>(FindObjectsSortMode.None);
+
+        foreach (var node in nodesInScene)
+        {
+            
+        }
     }
 }
